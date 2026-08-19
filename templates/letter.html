@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}A little note for you{% endblock %}
+
+{% block content %}
+<main class="page-shell">
+  <section class="letter-panel">
+    <h2 class="section-heading">A letter for you</h2>
+    <article class="letter-card" id="letter-card">
+      <div id="typed-text"></div>
+      <div class="letter-sign">— Gopisai</div>
+    </article>
+  </section>
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  window.pageLetterText = {{ letter_text|tojson }};
+</script>
+<script src="{{ url_for('static', filename='js/letter.js') }}"></script>
+{% endblock %}

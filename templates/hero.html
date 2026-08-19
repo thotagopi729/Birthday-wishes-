@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Happy Birthday Vijaya{% endblock %}
+
+{% block content %}
+<main class="page-shell hero-shell">
+  <section class="hero-panel">
+    <div class="eyebrow">A little something for</div>
+    <h1 class="hero-title" aria-label="Happy Birthday Vijaya">
+      <span class="hero-title-line">Happy Birthday</span>
+      <span class="hero-name">Vijaya Lakshmi</span>
+    </h1>
+    <div class="hero-date">22nd August · the best day of the year</div>
+
+    <div id="countdown" class="countdown" aria-live="polite">
+      <div class="count-box"><span id="cd-days" class="count-number">00</span><span class="count-label">Days</span></div>
+      <div class="count-box"><span id="cd-hours" class="count-number">00</span><span class="count-label">Hours</span></div>
+      <div class="count-box"><span id="cd-mins" class="count-number">00</span><span class="count-label">Mins</span></div>
+      <div class="count-box"><span id="cd-secs" class="count-number">00</span><span class="count-label">Secs</span></div>
+    </div>
+
+    <div id="countdown-done" class="countdown-done">It's your day, Ammulu! 🎉</div>
+    <div class="scroll-cue"><span>↓</span> keep going, my love</div>
+  </section>
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/hero.js') }}"></script>
+{% endblock %}

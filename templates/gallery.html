@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}Our memories{% endblock %}
+
+{% block content %}
+<main class="page-shell">
+  <section class="gallery-panel">
+    <h2 class="section-heading">Us, through the years</h2>
+    <div id="polaroid-stack" class="polaroid-stack" aria-live="polite"></div>
+    <div id="gallery-dots" class="gallery-dots"></div>
+    <div class="gallery-hint">tap the photo to see the next one</div>
+  </section>
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  window.galleryPhotos = {{ photos|tojson }};
+  window.galleryQuotes = {{ quotes|tojson }};
+</script>
+<script src="{{ url_for('static', filename='js/gallery.js') }}"></script>
+{% endblock %}

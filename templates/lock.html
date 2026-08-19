@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Unlock your birthday surprise{% endblock %}
+
+{% block content %}
+<main class="page-shell">
+  <section class="page-panel">
+    <div class="card-panel lock-card" id="lock-card">
+      <div class="lock-badge">🔒</div>
+      <h1 class="lock-title">Hey Ammulu</h1>
+      <p class="lock-prompt">Ammulu… password enter cheyyavey ❤️</p>
+      <p class="lock-subtitle">This little corner of the internet is just for you. Enter the passcode to open your birthday surprise 💜</p>
+
+      <form id="passcode-form" class="passcode-form" novalidate>
+        <input id="passcode-input" class="passcode-input" type="password" autocomplete="off" maxlength="32" placeholder="enter passcode..." aria-label="Passcode" />
+        <button id="unlock-btn" class="unlock-button" type="submit">Unlock ✨</button>
+        <div id="wrong-msg" class="form-status" aria-live="polite"></div>
+      </form>
+      <button id="solve-puzzle-btn" class="secondary-button puzzle-trigger" type="button" hidden>Solve Puzzle 🧩</button>
+    </div>
+  </section>
+
+  <div id="puzzle-modal" class="puzzle-modal" hidden aria-hidden="true">
+    <div class="puzzle-backdrop" data-close-puzzle></div>
+    <section class="puzzle-card card-panel" id="puzzle-card" role="dialog" aria-modal="true" aria-labelledby="puzzle-title">
+      <button class="puzzle-close" type="button" data-close-puzzle aria-label="Close puzzle">×</button>
+      <div class="puzzle-sparkle" aria-hidden="true">✦ ✧ ✦</div>
+      <h2 id="puzzle-title" class="puzzle-title">Oka chinna puzzle solve cheyyi Ammulu ❤️</h2>
+      <div class="puzzle-equation" aria-label="Your special name part plus my special name part equals our secret password">
+        <p>Nii peru nunchi oka special part ❤️</p>
+        <strong>+</strong>
+        <p>Naa peru nunchi oka special part ❤️</p>
+        <strong>=</strong>
+        <p>Mana secret password 🔐</p>
+      </div>
+      <div class="puzzle-names"><span>VIJAYALAKSHMI</span><b>+</b><span>GOPISAI</span></div>
+      <p class="puzzle-clue">Nii peru nunchi “VIJAYA” ❤️<br>Naa peru nunchi “GOPI” ❤️<br>Rendu kalipi choodu… 😉</p>
+      <p class="puzzle-question">VIJAYA + GOPI = ?</p>
+      <form id="puzzle-form" class="puzzle-form" novalidate>
+        <input id="puzzle-answer" type="text" autocomplete="off" maxlength="64" placeholder="Enter your answer..." aria-label="Puzzle answer" required>
+        <button id="puzzle-unlock-btn" class="unlock-button" type="submit">Unlock ❤️</button>
+        <div id="puzzle-status" class="form-status" aria-live="polite"></div>
+      </form>
+    </section>
+  </div>
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/lock.js') }}"></script>
+{% endblock %}

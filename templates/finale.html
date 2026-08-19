@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}Happy Birthday, Ammulu{% endblock %}
+
+{% block content %}
+<div class="finale-glow" aria-hidden="true"></div>
+<main class="page-shell">
+  <section class="finale-panel">
+    <div id="cake-wrap" class="cake-wrap" aria-label="Blow out the candles" role="button" tabindex="0">
+      <span class="candle" data-index="0" aria-label="Candle one"></span>
+      <span class="candle" data-index="1" aria-label="Candle two"></span>
+      <span class="candle" data-index="2" aria-label="Candle three"></span>
+      <span class="candle" data-index="3" aria-label="Candle four"></span>
+      <span class="cake-emoji" aria-hidden="true">🎂</span>
+    </div>
+
+    <div id="cake-message" class="cake-message">✨ tap the candles &amp; make a wish ✨</div>
+    <h2 id="finale-title" class="finale-title">Happy Birthday, my Ammulu 💜</h2>
+    <p id="finale-subtitle" class="finale-subtitle">Naa pranam nuvvu. Ila manam okati khadhu prathi birthday lo, prathi roju, chanipoyevaraku ila prematho vundali. I love you, today and always.</p>
+    <button type="button" id="replay-button" class="replay-button">Replay ↺</button>
+  </section>
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/finale.js') }}"></script>
+{% endblock %}
