@@ -97,6 +97,41 @@
     }
   }
 
+  // ENHANCEMENT: reveal each route panel once it enters the viewport.
+  function initializeReveals() {
+    const revealRoot = document.querySelector('.page-reveal');
+    if (!revealRoot) return;
+
+    const revealTargets = revealRoot.querySelectorAll('.reveal-group, .reveal-item');
+    if (revealTargets.length === 0) {
+      revealRoot.classList.add('is-visible');
+      return;
+    }
+
+    revealTargets.forEach(function (element, index) {
+      element.style.setProperty('--reveal-delay', `${index * 90}ms`);
+    });
+
+    if (!('IntersectionObserver' in window)) {
+      revealTargets.forEach(function (element) {
+        element.classList.add('is-visible');
+      });
+      return;
+    }
+
+    const observer = new IntersectionObserver(function (entries, currentObserver) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('is-visible');
+        currentObserver.unobserve(entry.target);
+      });
+    }, { threshold: 0.18 });
+
+    revealTargets.forEach(function (element) {
+      observer.observe(element);
+    });
+  }
+
   function initializeMusic() {
     if (!bgMusic || !musicToggle) return;
 
@@ -164,6 +199,7 @@
 
   document.addEventListener('DOMContentLoaded', function () {
     spawnAmbientDecor();
+    initializeReveals();
     initializeMusic();
 
     if (overlay) {

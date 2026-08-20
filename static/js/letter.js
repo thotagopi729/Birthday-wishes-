@@ -13,12 +13,6 @@ document.addEventListener('DOMContentLoaded', function () {
     return;
   }
 
-  if (!reducedMotion) {
-    card.classList.add('visible');
-  } else {
-    card.classList.add('visible');
-  }
-
   function typeText() {
     let index = 0;
     target.textContent = '';
@@ -44,7 +38,22 @@ document.addEventListener('DOMContentLoaded', function () {
     step();
   }
 
-  typeText();
+  // ENHANCEMENT: start typing only after the letter card enters the viewport.
+  function startWhenVisible() {
+    card.classList.add('visible');
+    typeText();
+  }
+
+  if (reducedMotion || !('IntersectionObserver' in window)) {
+    startWhenVisible();
+  } else {
+    const observer = new IntersectionObserver(function (entries, currentObserver) {
+      if (!entries[0].isIntersecting) return;
+      startWhenVisible();
+      currentObserver.disconnect();
+    }, { threshold: 0.25 });
+    observer.observe(card);
+  }
 
   window.addEventListener('beforeunload', function () {
     if (typingTimer) clearTimeout(typingTimer);
