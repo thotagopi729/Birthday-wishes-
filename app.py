@@ -11,13 +11,13 @@ load_dotenv()
 app = Flask(__name__)
 app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 
-SECRET_KEY = os.getenv("SECRET_KEY", "").strip()
-SITE_PASSCODE = os.getenv("SITE_PASSCODE", "").strip()
+SECRET_KEY = os.environ.get("SECRET_KEY", "").strip()
+SITE_PASSCODE = os.environ.get("SITE_PASSCODE", "").strip()
 
 if not SECRET_KEY or SECRET_KEY == "your_random_secret_key_here":
-    raise RuntimeError("Missing SECRET_KEY in .env. Set a real random value before starting the app.")
+    raise RuntimeError("SECRET_KEY environment variable is required")
 if not SITE_PASSCODE or SITE_PASSCODE == "your_passcode_here":
-    raise RuntimeError("Missing SITE_PASSCODE in .env. Set the passcode before starting the app.")
+    raise RuntimeError("SITE_PASSCODE environment variable is required")
 
 app.secret_key = SECRET_KEY
 
