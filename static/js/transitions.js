@@ -4,13 +4,15 @@
   const bgMusic = document.getElementById('bg-music');
   const musicStorageKey = 'birthday-music-state';
   const musicGestureKey = 'birthday-music-gesture';
+  const defaultMusicVolume = 0.35;
 
   // ENHANCEMENT: save the audio state before a real Flask route change so it survives page loads.
-  function persistMusicState(playing, currentTime) {
+  function persistMusicState(playing, currentTime, volume) {
     try {
       sessionStorage.setItem(musicStorageKey, JSON.stringify({
         musicEnabled: Boolean(playing),
-        musicCurrentTime: Number(currentTime) || 0
+        musicCurrentTime: Number(currentTime) || 0,
+        musicVolume: Number.isFinite(Number(volume)) ? Number(volume) : defaultMusicVolume
       }));
     } catch (error) {
       // Ignore storage failures in privacy-restricted browsers.
@@ -24,10 +26,11 @@
       const parsed = JSON.parse(raw);
       return {
         musicEnabled: Boolean(parsed.musicEnabled),
-        musicCurrentTime: Number(parsed.musicCurrentTime) || 0
+        musicCurrentTime: Number(parsed.musicCurrentTime) || 0,
+        musicVolume: Number.isFinite(Number(parsed.musicVolume)) ? Number(parsed.musicVolume) : defaultMusicVolume
       };
     } catch (error) {
-      return { musicEnabled: false, musicCurrentTime: 0 };
+      return { musicEnabled: false, musicCurrentTime: 0, musicVolume: defaultMusicVolume };
     }
   }
 
@@ -135,29 +138,61 @@
   function initializeMusic() {
     if (!bgMusic || !musicToggle) return;
 
-    const musicSource = '/static/music/bg-music.mp3';
-    bgMusic.src = musicSource;
-    bgMusic.volume = 0.35;
-    bgMusic.loop = true;
-
     if (!('sessionStorage' in window)) {
       disableMusicButton();
       return;
     }
 
     const saved = readMusicState();
-    bgMusic.currentTime = Number(saved.musicCurrentTime) || 0;
+    const savedTime = Math.max(0, Number(saved.musicCurrentTime) || 0);
+    const savedVolume = Math.min(1, Math.max(0, Number(saved.musicVolume) || defaultMusicVolume));
+    let musicEnabled = saved.musicEnabled;
+    let restoreComplete = false;
+
+    bgMusic.loop = true;
+    bgMusic.volume = savedVolume;
+
+    function saveCurrentState(isEnabled) {
+      persistMusicState(isEnabled, Number(bgMusic.currentTime) || savedTime, bgMusic.volume);
+    }
+
+    function restoreAndMaybePlay() {
+      if (restoreComplete) return;
+      restoreComplete = true;
+      if (Number.isFinite(bgMusic.duration) && savedTime < bgMusic.duration) {
+        bgMusic.currentTime = savedTime;
+      }
+      setMusicButtonState(false);
+
+      if (!musicEnabled) return;
+
+      // Autoplay may be blocked after a document navigation. Preserve the enabled state.
+      bgMusic.play().then(function () {
+        setMusicButtonState(true);
+        saveCurrentState(true);
+      }).catch(function () {
+        setMusicButtonState(false);
+        saveCurrentState(true);
+      });
+    }
+
+    bgMusic.addEventListener('loadedmetadata', restoreAndMaybePlay, { once: true });
+    if (bgMusic.readyState >= 1) restoreAndMaybePlay();
 
     bgMusic.addEventListener('error', function () {
       disableMusicButton();
-      persistMusicState(false, 0);
+      saveCurrentState(musicEnabled);
     });
 
     bgMusic.addEventListener('timeupdate', function () {
       if (!bgMusic.paused && bgMusic.dataset.disabled !== 'true') {
-        persistMusicState(true, bgMusic.currentTime);
+        saveCurrentState(true);
       }
     });
+
+    window.addEventListener('beforeunload', function () {
+      saveCurrentState(musicEnabled);
+    }, { once: true });
 
     musicToggle.addEventListener('click', async function () {
       if (bgMusic.dataset.disabled === 'true') {
@@ -167,34 +202,23 @@
       markUserMusicGesture();
 
       if (bgMusic.paused) {
+        musicEnabled = true;
         try {
-          bgMusic.currentTime = Number(bgMusic.currentTime || 0);
           await bgMusic.play();
           setMusicButtonState(true);
-          persistMusicState(true, bgMusic.currentTime);
+          saveCurrentState(true);
         } catch (error) {
           setMusicButtonState(false);
-          persistMusicState(false, Number(bgMusic.currentTime) || 0);
+          saveCurrentState(true);
         }
         return;
       }
 
       bgMusic.pause();
+      musicEnabled = false;
       setMusicButtonState(false);
-      persistMusicState(false, Number(bgMusic.currentTime) || 0);
+      saveCurrentState(false);
     });
-
-    if (saved.musicEnabled && hasUserMusicGesture()) {
-      bgMusic.play().then(function () {
-        setMusicButtonState(true);
-      }).catch(function () {
-        setMusicButtonState(false);
-        persistMusicState(false, Number(bgMusic.currentTime) || 0);
-      });
-      return;
-    }
-
-    setMusicButtonState(false);
   }
 
   document.addEventListener('DOMContentLoaded', function () {
@@ -214,9 +238,9 @@
 
     // ENHANCEMENT: save the audio state before the fade-out navigation begins.
     if (bgMusic && bgMusic.dataset.disabled !== 'true') {
-      persistMusicState(!bgMusic.paused, Number(bgMusic.currentTime) || 0);
+      persistMusicState(!bgMusic.paused, Number(bgMusic.currentTime) || 0, bgMusic.volume);
     } else {
-      persistMusicState(false, 0);
+      persistMusicState(false, 0, defaultMusicVolume);
     }
 
     if (!overlay) {
