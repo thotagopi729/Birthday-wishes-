@@ -1,4 +1,5 @@
-document.addEventListener('DOMContentLoaded', function () {
+window.addEventListener('birthday:page-ready', function (event) {
+  if (event.detail.path !== '/finale') return;
   const cakeWrap = document.getElementById('cake-wrap');
   const candleEls = Array.from(document.querySelectorAll('.candle'));
   const title = document.getElementById('finale-title');
@@ -153,4 +154,15 @@ document.addEventListener('DOMContentLoaded', function () {
       window.goToPage('/');
     });
   }
+
+  window.dispatchEvent(new CustomEvent('birthday:register-cleanup', { detail: { cleanup: function () {
+    document.body.classList.remove('celebrate');
+    document.querySelectorAll('.confetti-burst').forEach(function (particle) {
+      particle.remove();
+    });
+    if (confettiCanvas) {
+      const context = confettiCanvas.getContext('2d');
+      if (context) context.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+    }
+  } } }));
 });

@@ -1,4 +1,6 @@
-document.addEventListener('DOMContentLoaded', function () {
+window.addEventListener('birthday:page-ready', function (event) {
+  if (event.detail.path !== '/') return;
+  let disposed = false;
   const form = document.getElementById('passcode-form');
   const input = document.getElementById('passcode-input');
   const unlockButton = document.getElementById('unlock-btn');
@@ -94,6 +96,7 @@ document.addEventListener('DOMContentLoaded', function () {
       card.classList.add('unlock-glow');
       showStatus('Unlocked!');
       setTimeout(() => {
+        if (disposed) return;
         window.goToPage(data.next || '/loading');
       }, 380);
     } catch (error) {
@@ -134,11 +137,18 @@ document.addEventListener('DOMContentLoaded', function () {
 
       puzzleCard.classList.add('puzzle-success');
       puzzleStatus.textContent = 'Awww… correct Ammulu ❤️🥹 Mana secret password dorikesindhi 🔐❤️';
-      setTimeout(() => window.goToPage(data.next || '/loading'), 1500);
+      setTimeout(() => {
+        if (disposed) return;
+        window.goToPage(data.next || '/loading');
+      }, 1500);
     } catch (error) {
       puzzleUnlockButton.disabled = false;
       puzzleStatus.textContent = 'Something went wrong. Please try again.';
       triggerPuzzleShake();
     }
   });
+
+  window.dispatchEvent(new CustomEvent('birthday:register-cleanup', { detail: { cleanup: function () {
+    disposed = true;
+  } } }));
 });

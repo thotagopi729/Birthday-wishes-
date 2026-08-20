@@ -5,6 +5,10 @@
   const musicStorageKey = 'birthday-music-state';
   const musicGestureKey = 'birthday-music-gesture';
   const defaultMusicVolume = 0.35;
+  const pageContainer = document.getElementById('page-container');
+  const pageScriptSources = new Set();
+  let activePageCleanup = null;
+  let navigationInProgress = false;
 
   // ENHANCEMENT: save the audio state before a real Flask route change so it survives page loads.
   function persistMusicState(playing, currentTime, volume) {
@@ -221,10 +225,100 @@
     });
   }
 
+  function dispatchPageReady(path) {
+    if (!pageContainer) return;
+    pageContainer.dataset.pagePath = path;
+    window.dispatchEvent(new CustomEvent('birthday:page-ready', { detail: { path } }));
+  }
+
+  function cleanupPage() {
+    if (typeof activePageCleanup === 'function') {
+      activePageCleanup();
+      activePageCleanup = null;
+    }
+  }
+
+  function registerPageCleanup(cleanup) {
+    activePageCleanup = typeof cleanup === 'function' ? cleanup : null;
+  }
+
+  function registerExistingPageScripts() {
+    document.querySelectorAll('script[src]').forEach(function (script) {
+      const source = new URL(script.src, window.location.href).href;
+      if (!source.endsWith('/js/transitions.js')) pageScriptSources.add(source);
+    });
+  }
+
+  async function loadPageScripts(documentRoot) {
+    const scripts = Array.from(documentRoot.querySelectorAll('script'));
+    for (const sourceScript of scripts) {
+      const source = sourceScript.getAttribute('src');
+      if (source) {
+        const absoluteSource = new URL(source, window.location.href).href;
+        if (absoluteSource.endsWith('/js/transitions.js') || pageScriptSources.has(absoluteSource)) continue;
+        await new Promise(function (resolve, reject) {
+          const script = document.createElement('script');
+          script.src = absoluteSource;
+          script.onload = resolve;
+          script.onerror = reject;
+          document.body.appendChild(script);
+        });
+        pageScriptSources.add(absoluteSource);
+        continue;
+      }
+
+      const script = document.createElement('script');
+      script.textContent = sourceScript.textContent;
+      document.body.appendChild(script);
+      script.remove();
+    }
+  }
+
+  async function navigateWithinShell(url, addHistory) {
+    if (!pageContainer || navigationInProgress) return;
+    const targetUrl = new URL(url, window.location.href);
+    if (targetUrl.origin !== window.location.origin) {
+      window.location.href = targetUrl.href;
+      return;
+    }
+
+    navigationInProgress = true;
+    cleanupPage();
+    if (overlay) {
+      overlay.classList.remove('is-hidden');
+      overlay.classList.add('is-visible');
+    }
+
+    try {
+      const response = await fetch(targetUrl.href, { headers: { 'X-Birthday-Shell': 'true' } });
+      if (!response.ok) throw new Error(`Navigation failed: ${response.status}`);
+      const responseDocument = new DOMParser().parseFromString(await response.text(), 'text/html');
+      const nextContainer = responseDocument.querySelector('#page-container');
+      if (!nextContainer) throw new Error('Page container missing from response');
+
+      pageContainer.replaceChildren(...Array.from(nextContainer.childNodes));
+      document.title = responseDocument.title;
+      const nextPath = new URL(response.url, window.location.href).pathname;
+      if (addHistory) history.pushState({}, '', nextPath);
+      await loadPageScripts(responseDocument);
+      initializeReveals();
+      dispatchPageReady(nextPath);
+      requestAnimationFrame(function () {
+        if (overlay) overlay.classList.add('is-hidden');
+      });
+    } catch (error) {
+      window.location.href = targetUrl.href;
+    } finally {
+      navigationInProgress = false;
+    }
+  }
+
   document.addEventListener('DOMContentLoaded', function () {
+    registerExistingPageScripts();
     spawnAmbientDecor();
     initializeReveals();
     initializeMusic();
+    dispatchPageReady(window.location.pathname);
 
     if (overlay) {
       requestAnimationFrame(function () {
@@ -235,23 +329,14 @@
 
   window.goToPage = function (url) {
     if (!url) return;
-
-    // ENHANCEMENT: save the audio state before the fade-out navigation begins.
-    if (bgMusic && bgMusic.dataset.disabled !== 'true') {
-      persistMusicState(!bgMusic.paused, Number(bgMusic.currentTime) || 0, bgMusic.volume);
-    } else {
-      persistMusicState(false, 0, defaultMusicVolume);
-    }
-
-    if (!overlay) {
-      window.location.href = url;
-      return;
-    }
-
-    overlay.classList.remove('is-hidden');
-    overlay.classList.add('is-visible');
-    setTimeout(function () {
-      window.location.href = url;
-    }, 420);
+    navigateWithinShell(url, true);
   };
+
+  window.addEventListener('birthday:register-cleanup', function (event) {
+    registerPageCleanup(event.detail && event.detail.cleanup);
+  });
+
+  window.addEventListener('popstate', function () {
+    navigateWithinShell(window.location.href, false);
+  });
 })();

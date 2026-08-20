@@ -1,4 +1,5 @@
-document.addEventListener('DOMContentLoaded', function () {
+window.addEventListener('birthday:page-ready', function (event) {
+  if (event.detail.path !== '/hero') return;
   const title = document.querySelector('.hero-title');
   const name = document.querySelector('.hero-name');
   const countdownFrames = {
@@ -85,8 +86,8 @@ document.addEventListener('DOMContentLoaded', function () {
     window.goToPage('/gallery');
   }, totalSequenceMs);
 
-  window.addEventListener('beforeunload', function () {
+  window.dispatchEvent(new CustomEvent('birthday:register-cleanup', { detail: { cleanup: function () {
     if (countdownInterval) clearInterval(countdownInterval);
     if (advanceTimer) clearTimeout(advanceTimer);
-  });
+  } } }));
 });

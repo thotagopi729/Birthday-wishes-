@@ -20,7 +20,9 @@
     <audio id="bg-music" preload="auto" loop src="{{ url_for('static', filename='music/bg-music.mp3') }}"></audio>
     <button id="music-toggle" type="button" aria-label="Toggle background music">🔇</button>
 
-    {% block content %}{% endblock %}
+    <div id="page-container" data-page-path="{{ request.path }}">
+      {% block content %}{% endblock %}
+    </div>
 
     <script src="{{ url_for('static', filename='js/transitions.js') }}"></script>
     {% block scripts %}{% endblock %}

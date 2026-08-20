@@ -1,4 +1,5 @@
-document.addEventListener('DOMContentLoaded', function () {
+window.addEventListener('birthday:page-ready', function (event) {
+  if (event.detail.path !== '/letter') return;
   const card = document.getElementById('letter-card');
   const target = document.getElementById('typed-text');
   const text = window.pageLetterText || '';
@@ -55,8 +56,8 @@ document.addEventListener('DOMContentLoaded', function () {
     observer.observe(card);
   }
 
-  window.addEventListener('beforeunload', function () {
+  window.dispatchEvent(new CustomEvent('birthday:register-cleanup', { detail: { cleanup: function () {
     if (typingTimer) clearTimeout(typingTimer);
     if (finishTimer) clearTimeout(finishTimer);
-  });
+  } } }));
 });

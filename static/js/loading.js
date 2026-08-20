@@ -1,4 +1,5 @@
-document.addEventListener('DOMContentLoaded', function () {
+window.addEventListener('birthday:page-ready', function (event) {
+  if (event.detail.path !== '/loading') return;
   const progressBar = document.getElementById('progress-bar');
   const loadingPercent = document.getElementById('loading-percent');
   if (!progressBar || !loadingPercent) return;
@@ -33,8 +34,8 @@ document.addEventListener('DOMContentLoaded', function () {
     updateProgress(nextStep);
   }, 180);
 
-  window.addEventListener('beforeunload', function () {
+  window.dispatchEvent(new CustomEvent('birthday:register-cleanup', { detail: { cleanup: function () {
     clearInterval(intervalId);
     if (activeTimer) clearTimeout(activeTimer);
-  });
+  } } }));
 });

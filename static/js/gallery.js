@@ -1,4 +1,5 @@
-document.addEventListener('DOMContentLoaded', function () {
+window.addEventListener('birthday:page-ready', function (event) {
+  if (event.detail.path !== '/gallery') return;
   const stack = document.getElementById('polaroid-stack');
   const dotsWrap = document.getElementById('gallery-dots');
   const photos = Array.isArray(window.galleryPhotos) ? window.galleryPhotos : [];
@@ -10,9 +11,9 @@ document.addEventListener('DOMContentLoaded', function () {
     fallback.textContent = 'Memories are on their way...';
     if (stack) stack.appendChild(fallback);
     fallbackTimer = setTimeout(() => window.goToPage('/letter'), 1200);
-    window.addEventListener('beforeunload', function () {
+    window.dispatchEvent(new CustomEvent('birthday:register-cleanup', { detail: { cleanup: function () {
       clearTimeout(fallbackTimer);
-    });
+    } } }));
     return;
   }
 
@@ -159,8 +160,8 @@ document.addEventListener('DOMContentLoaded', function () {
     cycleTimer = setTimeout(cycle, reducedMotion ? 6000 : 2600);
   }, reducedMotion ? 6000 : 2600);
 
-  window.addEventListener('beforeunload', function () {
+  window.dispatchEvent(new CustomEvent('birthday:register-cleanup', { detail: { cleanup: function () {
     clearTimeout(cycleTimer);
     clearTimeout(navigationTimer);
-  });
+  } } }));
 });
