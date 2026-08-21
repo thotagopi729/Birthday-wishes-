@@ -292,13 +292,18 @@
     try {
       const response = await fetch(targetUrl.href, { headers: { 'X-Birthday-Shell': 'true' } });
       if (!response.ok) throw new Error(`Navigation failed: ${response.status}`);
+      const responseUrl = new URL(response.url, window.location.href);
+      if (responseUrl.pathname !== targetUrl.pathname) {
+        window.location.href = responseUrl.href;
+        return;
+      }
       const responseDocument = new DOMParser().parseFromString(await response.text(), 'text/html');
       const nextContainer = responseDocument.querySelector('#page-container');
       if (!nextContainer) throw new Error('Page container missing from response');
 
       pageContainer.replaceChildren(...Array.from(nextContainer.childNodes));
       document.title = responseDocument.title;
-      const nextPath = new URL(response.url, window.location.href).pathname;
+      const nextPath = responseUrl.pathname;
       if (addHistory) history.pushState({}, '', nextPath);
       await loadPageScripts(responseDocument);
       initializeReveals();
@@ -307,6 +312,7 @@
         if (overlay) overlay.classList.add('is-hidden');
       });
     } catch (error) {
+      if (overlay) overlay.classList.add('is-hidden');
       window.location.href = targetUrl.href;
     } finally {
       navigationInProgress = false;
