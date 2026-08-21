@@ -12,6 +12,15 @@ window.addEventListener('birthday:page-ready', function (event) {
     return;
   }
 
+  function revealContinueButton() {
+    if (!continueButton) return;
+    continueButton.hidden = false;
+    continueButton.disabled = false;
+    continueButton.style.visibility = 'visible';
+    continueButton.style.opacity = '1';
+    continueButton.setAttribute('aria-hidden', 'false');
+  }
+
   function typeText() {
     let index = 0;
     target.textContent = '';
@@ -21,10 +30,8 @@ window.addEventListener('birthday:page-ready', function (event) {
 
     function step() {
       if (index >= text.length) {
-        cursor.remove();
-        if (continueButton) {
-          continueButton.hidden = false;
-        }
+        if (cursor && cursor.parentNode) cursor.remove();
+        revealContinueButton();
         return;
       }
 
@@ -37,8 +44,15 @@ window.addEventListener('birthday:page-ready', function (event) {
   }
 
   function startLetter() {
+    if (!card || !target) return;
     card.hidden = false;
     card.classList.add('visible');
+    if (continueButton) {
+      continueButton.hidden = true;
+      continueButton.disabled = true;
+      continueButton.style.visibility = 'hidden';
+      continueButton.style.opacity = '0';
+    }
     typeText();
     if (beginButton) beginButton.hidden = true;
   }
