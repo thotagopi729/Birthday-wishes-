@@ -370,10 +370,16 @@
       initializeReveals();
       dispatchPageReady(nextPath);
       requestAnimationFrame(function () {
-        if (overlay) overlay.classList.add('is-hidden');
+        if (overlay) {
+          overlay.classList.remove('is-visible');
+          overlay.classList.add('is-hidden');
+        }
       });
     } catch (error) {
-      if (overlay) overlay.classList.add('is-hidden');
+      if (overlay) {
+        overlay.classList.remove('is-visible');
+        overlay.classList.add('is-hidden');
+      }
       window.location.href = targetUrl.href;
     } finally {
       navigationInProgress = false;
@@ -390,6 +396,7 @@
 
     if (overlay) {
       requestAnimationFrame(function () {
+        overlay.classList.remove('is-visible');
         overlay.classList.add('is-hidden');
       });
     }
