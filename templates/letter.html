@@ -6,10 +6,12 @@
 <main class="page-shell page-reveal">
   <section class="letter-panel reveal-group">
     <h2 class="section-heading">A letter for you</h2>
-    <article class="letter-card" id="letter-card">
+    <button id="letter-begin" type="button" class="unlock-button">Read My Letter →</button>
+    <article class="letter-card" id="letter-card" hidden>
       <div id="typed-text"></div>
       <div class="letter-sign">— Gopisai</div>
     </article>
+    <button id="letter-continue" type="button" class="unlock-button" hidden>Show Me →</button>
   </section>
 </main>
 {% endblock %}

@@ -8,7 +8,8 @@
     <h2 class="section-heading">Us, through the years</h2>
     <div id="polaroid-stack" class="polaroid-stack" aria-live="polite"></div>
     <div id="gallery-dots" class="gallery-dots"></div>
-    <div class="gallery-hint">tap the photo to see the next one</div>
+    <div id="gallery-progress" class="gallery-hint">1 / {{ photos|length }}</div>
+    <button id="gallery-next" type="button" class="unlock-button">Next Memory →</button>
   </section>
 </main>
 {% endblock %}

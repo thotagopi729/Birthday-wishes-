@@ -10,9 +10,6 @@ window.addEventListener('birthday:page-ready', function (event) {
   };
   const doneLabel = document.getElementById('countdown-done');
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const totalSequenceMs = reducedMotion ? 1200 : 5200;
-  let advanceTimer = null;
-
   function animateTitle() {
     if (!title) return;
     const words = title.querySelectorAll('.hero-title-line, .hero-name');
@@ -78,16 +75,18 @@ window.addEventListener('birthday:page-ready', function (event) {
     return setInterval(render, 1000);
   }
 
+  const continueButton = document.getElementById('hero-continue');
+
   animateTitle();
   const countdownInterval = nextBirthdayCountdown();
 
-  if (advanceTimer) clearTimeout(advanceTimer);
-  advanceTimer = setTimeout(function () {
-    window.goToPage('/gallery');
-  }, totalSequenceMs);
+  if (continueButton) {
+    continueButton.addEventListener('click', function () {
+      window.goToPage('/gallery');
+    });
+  }
 
   window.dispatchEvent(new CustomEvent('birthday:register-cleanup', { detail: { cleanup: function () {
     if (countdownInterval) clearInterval(countdownInterval);
-    if (advanceTimer) clearTimeout(advanceTimer);
   } } }));
 });

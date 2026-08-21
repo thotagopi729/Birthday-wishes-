@@ -1,6 +1,7 @@
 window.addEventListener('birthday:page-ready', function (event) {
   if (event.detail.path !== '/finale') return;
   const cakeWrap = document.getElementById('cake-wrap');
+  const cakeTrigger = document.getElementById('cake-trigger');
   const candleEls = Array.from(document.querySelectorAll('.candle'));
   const title = document.getElementById('finale-title');
   const subtitle = document.getElementById('finale-subtitle');
@@ -11,6 +12,14 @@ window.addEventListener('birthday:page-ready', function (event) {
   let finaleComplete = false;
 
   if (!cakeWrap || candleEls.length === 0) return;
+
+  if (cakeTrigger) {
+    cakeTrigger.addEventListener('click', function () {
+      cakeWrap.hidden = false;
+      cakeTrigger.hidden = true;
+      cakeWrap.classList.add('is-visible');
+    });
+  }
 
   function createBurst(x, y, color) {
     const particle = document.createElement('span');

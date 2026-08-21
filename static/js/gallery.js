@@ -18,11 +18,10 @@ window.addEventListener('birthday:page-ready', function (event) {
   }
 
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const nextButton = document.getElementById('gallery-next');
+  const progressLabel = document.getElementById('gallery-progress');
   let activeIndex = 0;
-  let cycleTimer = null;
-  let navigationTimer = null;
   let isTransitioning = false;
-  let suppressClick = false;
 
   function getIndex(offset) {
     return (activeIndex + offset + photos.length) % photos.length;
@@ -64,104 +63,47 @@ window.addEventListener('birthday:page-ready', function (event) {
     return card;
   }
 
-  function renderStack(animateActive) {
-    stack.innerHTML = '';
-    let enteringCard = null;
-    const stackOffsets = photos.length >= 3 ? [-2, -1, 0] : photos.length === 2 ? [-1, 0] : [0];
-
-    stackOffsets.forEach(function (offset, position) {
-      const card = createCard(getIndex(offset), position, stackOffsets.length);
-      if (position === 2 && animateActive && !reducedMotion) {
-        card.classList.add('entering');
-        enteringCard = card;
-      }
-      stack.appendChild(card);
-    });
-
-    if (enteringCard) {
-      requestAnimationFrame(function () {
-        enteringCard.classList.remove('entering');
-      });
+  function updateProgress() {
+    if (progressLabel) {
+      progressLabel.textContent = `${activeIndex + 1} / ${photos.length}`;
     }
 
+    if (nextButton) {
+      nextButton.textContent = activeIndex === photos.length - 1 ? 'Read My Letter →' : 'Next Memory →';
+    }
+  }
+
+  function renderStack() {
+    stack.innerHTML = '';
+    const card = createCard(activeIndex, 0, 1);
+    card.classList.add('active');
+    stack.appendChild(card);
     buildDots();
+    updateProgress();
   }
 
   function advanceGallery() {
-    if (isTransitioning || photos.length < 2) return;
+    if (isTransitioning || photos.length < 1) return;
     isTransitioning = true;
 
-    const oldActive = stack.querySelector('.polaroid-card.active');
-    if (!oldActive) {
+    if (activeIndex >= photos.length - 1) {
+      window.goToPage('/letter');
       isTransitioning = false;
       return;
     }
 
-    oldActive.classList.remove('active');
-    oldActive.classList.add('leaving');
-
-    let completed = false;
-    function finishTransition() {
-      if (completed) return;
-      completed = true;
-      oldActive.removeEventListener('transitionend', finishTransition);
-      clearTimeout(navigationTimer);
-      activeIndex = (activeIndex + 1) % photos.length;
-      renderStack(true);
-      isTransitioning = false;
-    }
-
-    oldActive.addEventListener('transitionend', function (event) {
-      if (event.propertyName === 'transform') finishTransition();
-    });
-    navigationTimer = setTimeout(finishTransition, reducedMotion ? 20 : 720);
+    activeIndex += 1;
+    renderStack();
+    isTransitioning = false;
   }
 
-  stack.addEventListener('click', function () {
-    if (suppressClick) {
-      suppressClick = false;
-      return;
-    }
-    advanceGallery();
-  });
+  if (nextButton) {
+    nextButton.addEventListener('click', advanceGallery);
+  }
 
-  stack.addEventListener('pointerdown', function (event) {
-    if (reducedMotion) return;
-    const startX = event.clientX;
-    let drag = 0;
-
-    function handleMove(eventMove) {
-      drag = eventMove.clientX - startX;
-      stack.style.transform = `rotateY(${drag * 0.12}deg)`;
-    }
-
-    function handleUp() {
-      if (Math.abs(drag) > 30) {
-        suppressClick = true;
-        advanceGallery();
-      }
-      stack.style.transform = 'none';
-      window.removeEventListener('pointermove', handleMove);
-      window.removeEventListener('pointerup', handleUp);
-    }
-
-    window.addEventListener('pointermove', handleMove);
-    window.addEventListener('pointerup', handleUp);
-  });
-
-  renderStack(false);
-
-  cycleTimer = setTimeout(function cycle() {
-    if (activeIndex === photos.length - 1) {
-      window.goToPage('/letter');
-      return;
-    }
-    advanceGallery();
-    cycleTimer = setTimeout(cycle, reducedMotion ? 6000 : 2600);
-  }, reducedMotion ? 6000 : 2600);
+  renderStack();
 
   window.dispatchEvent(new CustomEvent('birthday:register-cleanup', { detail: { cleanup: function () {
-    clearTimeout(cycleTimer);
-    clearTimeout(navigationTimer);
+    isTransitioning = false;
   } } }));
 });
