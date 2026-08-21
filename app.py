@@ -22,55 +22,19 @@ if not SITE_PASSCODE or SITE_PASSCODE == "your_passcode_here":
 app.secret_key = SECRET_KEY
 
 PROGRESS_ORDER = ["locked", "unlocked", "loading", "hero", "gallery", "letter", "finale"]
-LETTER_TEXT = """**Naa Ammulu… ❤️**
+LETTER_TEXT = """Nuvvu ante naaku chala ishtam. Chala ani cheppadam kuda takkuve, endukante nuvvu naaku just ishtam kaadu — nuvve naa pranam. ❤️
 
-Nuvvu ante naaku chala ishtam ani cheppadam chala chinna maata. Nijanga cheppalante, “ishtam” ane word tho naa feeling motham cheppalenu. Endukante nuvvu naaku just oka person kaadu… naa life lo oka very special part. Konni sarlu naa feelings ni words lo cheppadaniki try chesthe, words saripovu anipisthayi. Nuvvu naa life lo entha important ani explain cheyyalante, naa daggara unna prati word kuda takkuve anipisthundi.
+Nee navvu, nee care, nee tho maatladina prathi chinna moment… naa ordinary days ni kuda special ga marchestayi. Nuvvu naa life lo vachina taruvatha, konni simple moments kuda naaku beautiful memories ayyayi.
 
-Nee navvu naaku chala ishtam. Nuvvu navvuthunte, teliyakundaane naa face meeda kuda smile vasthundi. Nee way of talking, nee soft care, chinna chinna vishayalani kuda gurthupettukune vidhanam… ivanni naaku teliyakundane ninnu inka inka daggaraga feel avvalanipinchela chesayi.
+Ee birthday roju, naa manasulo unna oka chinna maata cheppali anipisthundi — ninnu kalavadam naa life lo jarigina beautiful things lo okati. Nuvvu happy ga unte chalu, aa happiness lo nenu oka small reason aina naaku chaalu.
 
-Nuvvu naa life loki vachina taruvatha, ordinary days kuda konchem special ga anipinchayi. Oka simple conversation kuda oka memory aipoyindi. Oka small smile kuda oka beautiful moment aipoyindi. Nuvvu chesina chinna chinna things anni naaku pedda vishayalla gurthundipothayi.
+Nee dreams anni nijam avvali. Nee face lo ee beautiful smile eppudu undali. Life lo enni changes vachina, enni years gadichina, nee happiness ni ilaane celebrate cheyyalani korukuntunna.
 
-Ee birthday roju, naa manasulo chala rojula nunchi dachukunna konni feelings ni konchem ekkuvaga cheppalani anipisthundi.
+Happy Birthday, naa Ammulu. ❤️
 
-"Ninnu first time kiss chesinaa roju" gurinchi alochinchinappudu ippatiki naa face meeda smile vasthundi. Adhi vere vallaki chala small moment la anipinchachu… kani naaku matram adhi chala special. Endukante aa moment lo nuvvu unnava. And sometimes, oka memory special avvadaniki reason aa moment kaadu… aa moment lo unna person.
+Nuvvu naaku entha specialo words tho complete ga cheppalenu.
 
-Nuvvu chala strong. At the same time, chala soft and caring. Nuvvu chala simple ga unna moments lone kuda oka special charm untundi. Nee lo unna aa combination naaku chala rare ga anipisthundi. And honestly, ade ninnu naa eyes lo inka special ga chesthundi.
-
-Nuvvu entha mandi life lo oka smile ki reason avuthavo naaku teliyadu. Kani naa life lo matram, nuvvu chala sarlu naa smile ki reason ayyav. Nenu bad mood lo unna rojullo kuda nee oka message, nee oka maata, nee oka small gesture na mood ni marchagaligindi.
-
-Anduke nee birthday roju nenu korukunedi okkate…
-
-Nee life lo nuvvu deserve chese happiness motham ninnu cherukovali. Nuvvu eppudu vere vallaki ichina love, care, happiness anni double ga nee daggaraki tirigi ravali. Nuvvu silent ga carry chesina worries anni konchem konchem ga thaggipovali. Nee heart ki peace dorakali. Nee dreams anni okkokkatiga nijam avvali.
-
-Life eppudu manam anukunna vidhamga undadu. Konni rojulu beautiful ga untayi, konni rojulu difficult ga untayi. Kani aa difficult days lo kuda, **nuvvu entha strong person vi ani eppudu marchipoku.**
-
-Nuvvu chala valuable. Nuvvu chala loved. Nuvvu chala special.
-
-And naa life lo nuvvu unna place ni evaritho compare cheyyalenu.
-
-**Happy Birthday, naa Ammulu. 🎂❤️**
-
-Ee roju nee face meeda unna smile, nee life motham lo continue avvali ani korukuntunna. Nee mundu unna prati year, ippatiki unna years kanna inka beautiful ga undali. Nuvvu kalalu kanna life kanna, nuvvu deserve chese life inka beautiful ga undali.
-
-Nuvvu eppudu happy ga undali. Eppudu navvuthu undali. Nee heart lo unna aa beautiful person ni eppudu marchipokudadhu.
-
-And finally…
-
-**Ninnu entha ishtapaduthunnano cheppadaniki “I love you” ane three words kuda konni sarlu chala small ga anipisthayi.**
-
-Nuvvu naaku **ishtam**.
-
-Nuvvu naaku **chala special**.
-
-Nuvvu naaku **pranam laanti person**.
-
-And no matter how many words I write, naa heart lo nee kosam unna feeling ni complete ga explain cheyyalenu.
-
-**I love you, Ammulu. ❤️**
-
-**Eppatiki… naa heart lo oka special place nee kosame.**
-
-"""
+I love you, always. ❤️"""
 
 GALLERY_QUOTES = [
     "Nuvvu navvithe... naa roju complete avuthundi ❤️",

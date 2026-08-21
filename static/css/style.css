@@ -141,12 +141,12 @@ button, input {
   transition: opacity 2.4s ease;
 }
 
-.background-memory[data-active="true"] { opacity: 0.24; }
+.background-memory[data-active="true"] { opacity: 0.52; }
 
 .background-memory-shade {
   position: absolute;
   inset: 0;
-  background: linear-gradient(160deg, rgba(36, 7, 43, 0.82), rgba(58, 13, 63, 0.68) 48%, rgba(36, 7, 43, 0.88));
+  background: linear-gradient(160deg, rgba(36, 7, 43, 0.48), rgba(58, 13, 63, 0.36) 48%, rgba(36, 7, 43, 0.54));
 }
 
 #music-control {
