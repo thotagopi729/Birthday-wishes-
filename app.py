@@ -113,6 +113,11 @@ def gallery_images() -> list[str]:
     return files
 
 
+@app.context_processor
+def inject_memory_photos() -> dict[str, list[str]]:
+    return {"memory_photos": gallery_images()}
+
+
 @app.get("/")
 def lock_page():
     session.setdefault("progress", "locked")

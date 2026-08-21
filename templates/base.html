@@ -15,10 +15,19 @@
   <body class="theme-plum {% block body_class %}{% endblock %}">
     <div id="page-transition-overlay" aria-hidden="true"></div>
     <div id="heart-field" aria-hidden="true"></div>
+    <div id="background-memory-layer" aria-hidden="true">
+      {% for photo in memory_photos %}
+        <img class="background-memory" src="{{ photo }}" alt="" {% if loop.first %}data-active="true"{% endif %} />
+      {% endfor %}
+      <div class="background-memory-shade"></div>
+    </div>
     <canvas id="confetti-canvas" aria-hidden="true"></canvas>
 
     <audio id="bg-music" preload="auto" loop src="{{ url_for('static', filename='music/bg-music.mp3') }}"></audio>
-    <button id="music-toggle" type="button" aria-label="Toggle background music">🔇</button>
+    <div id="music-control">
+      <div id="music-hint" role="status">Ammulu ee song play cheyyavey ❤️</div>
+      <button id="music-toggle" type="button" aria-label="Toggle background music">🔇</button>
+    </div>
 
     <div id="page-container" data-page-path="{{ request.path }}">
       {% block content %}{% endblock %}

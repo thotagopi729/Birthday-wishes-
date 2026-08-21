@@ -1,6 +1,7 @@
 (function () {
   const overlay = document.getElementById('page-transition-overlay');
   const musicToggle = document.getElementById('music-toggle');
+  const musicHint = document.getElementById('music-hint');
   const bgMusic = document.getElementById('bg-music');
   const musicStorageKey = 'birthday-music-state';
   const musicGestureKey = 'birthday-music-gesture';
@@ -9,6 +10,10 @@
   const pageScriptSources = new Set();
   let activePageCleanup = null;
   let navigationInProgress = false;
+  let memoryTimer = null;
+  let memoryPhotos = [];
+  let memoryDuration = 0;
+  let activeMemoryIndex = 0;
 
   // ENHANCEMENT: save the audio state before a real Flask route change so it survives page loads.
   function persistMusicState(playing, currentTime, volume) {
@@ -52,6 +57,60 @@
     } catch (error) {
       // Ignore storage failures in restricted browsers.
     }
+  }
+
+  function dismissMusicHint() {
+    if (!musicHint) return;
+    musicHint.classList.add('is-dismissed');
+    try {
+      sessionStorage.setItem(musicGestureKey, 'true');
+    } catch (error) {
+      // Ignore storage failures in privacy-restricted browsers.
+    }
+  }
+
+  function initializeMemorySlideshow() {
+    const layer = document.getElementById('background-memory-layer');
+    if (!layer || layer.dataset.initialized === 'true') return;
+
+    memoryPhotos = Array.from(layer.querySelectorAll('.background-memory'));
+    if (memoryPhotos.length < 2) return;
+    layer.dataset.initialized = 'true';
+
+    function showMemory(index) {
+      activeMemoryIndex = index % memoryPhotos.length;
+      memoryPhotos.forEach(function (photo, photoIndex) {
+        photo.dataset.active = String(photoIndex === activeMemoryIndex);
+      });
+    }
+
+    function updateFromMusic() {
+      if (!bgMusic || !Number.isFinite(bgMusic.duration) || bgMusic.duration <= 0) return;
+      memoryDuration = bgMusic.duration;
+      showMemory(Math.floor((bgMusic.currentTime / memoryDuration) * memoryPhotos.length));
+    }
+
+    function startFallback() {
+      if (memoryTimer || (bgMusic && !bgMusic.paused)) return;
+      memoryTimer = window.setInterval(function () {
+        if (bgMusic && !bgMusic.paused) return;
+        showMemory(activeMemoryIndex + 1);
+      }, 10000);
+    }
+
+    function stopFallback() {
+      if (!memoryTimer) return;
+      clearInterval(memoryTimer);
+      memoryTimer = null;
+    }
+
+    if (bgMusic) {
+      bgMusic.addEventListener('loadedmetadata', updateFromMusic);
+      bgMusic.addEventListener('timeupdate', updateFromMusic);
+      bgMusic.addEventListener('play', stopFallback);
+      bgMusic.addEventListener('pause', startFallback);
+    }
+    startFallback();
   }
 
   function setMusicButtonState(isPlaying) {
@@ -155,6 +214,7 @@
 
     bgMusic.loop = true;
     bgMusic.volume = savedVolume;
+    if (musicHint && hasUserMusicGesture()) musicHint.classList.add('is-dismissed');
 
     function saveCurrentState(isEnabled) {
       persistMusicState(isEnabled, Number(bgMusic.currentTime) || savedTime, bgMusic.volume);
@@ -204,6 +264,7 @@
       }
 
       markUserMusicGesture();
+      dismissMusicHint();
 
       if (bgMusic.paused) {
         musicEnabled = true;
@@ -322,6 +383,7 @@
   document.addEventListener('DOMContentLoaded', function () {
     registerExistingPageScripts();
     spawnAmbientDecor();
+    initializeMemorySlideshow();
     initializeReveals();
     initializeMusic();
     dispatchPageReady(window.location.pathname);
