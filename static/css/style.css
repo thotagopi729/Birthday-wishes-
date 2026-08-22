@@ -561,6 +561,8 @@ button, input {
 }
 
 .hero-panel {
+  position: relative;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -667,6 +669,61 @@ button, input {
   letter-spacing: 0.18em;
   text-transform: uppercase;
   opacity: 0.62;
+}
+
+.hero-celebration-count {
+  min-height: 7rem;
+  display: grid;
+  place-items: center;
+  margin-top: 18px;
+  color: var(--gold);
+  font-size: clamp(4.5rem, 18vw, 8rem);
+  font-weight: 700;
+  line-height: 1;
+  text-shadow: 0 0 28px rgba(247, 215, 140, 0.72);
+  animation: countFlash 0.75s ease-in-out;
+}
+
+.hero-celebration-message {
+  min-height: 5.5rem;
+  margin-top: 10px;
+  color: var(--gold);
+  font-size: clamp(1.8rem, 5vw, 3.4rem);
+  font-weight: 700;
+  line-height: 1.18;
+  text-shadow: 0 0 24px rgba(247, 215, 140, 0.6);
+}
+
+.hero-celebration-message span {
+  display: block;
+  margin-top: 10px;
+  color: var(--pink-soft);
+  font-size: clamp(1rem, 3vw, 1.5rem);
+  font-weight: 500;
+}
+
+.hero-blast {
+  animation: heroBlast 0.9s ease-out;
+}
+
+.hero-blast-particle {
+  position: absolute;
+  left: 50%;
+  top: 43%;
+  z-index: 2;
+  pointer-events: none;
+  font-size: 1.4rem;
+  animation: heroParticle 1.5s ease-out forwards;
+}
+
+@keyframes heroBlast {
+  0%, 100% { filter: none; }
+  35% { filter: brightness(1.45) drop-shadow(0 0 24px rgba(255, 219, 125, 0.9)); }
+}
+
+@keyframes heroParticle {
+  0% { opacity: 1; transform: translate(-50%, -50%) scale(0.4); }
+  100% { opacity: 0; transform: translate(calc(-50% + var(--x)), calc(-50% + var(--y))) scale(1.2); }
 }
 
 .scroll-cue span {

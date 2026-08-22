@@ -72,6 +72,7 @@ function initializeLetter() {
 
   window.dispatchEvent(new CustomEvent('birthday:register-cleanup', { detail: { cleanup: function () {
     if (typingTimer) clearTimeout(typingTimer);
+    letterInitialized = false;
   } } }));
 }
 
@@ -79,8 +80,8 @@ window.addEventListener('birthday:page-ready', function (event) {
   if (event.detail.path === '/letter') initializeLetter();
 });
 
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initializeLetter, { once: true });
-} else if (document.querySelector('#page-container[data-page-path="/letter"]')) {
+if (document.getElementById('letter-card')) {
   initializeLetter();
+} else if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initializeLetter, { once: true });
 }

@@ -8,6 +8,24 @@ window.addEventListener('birthday:page-ready', function (event) {
   let timer = null;
   let disposed = false;
 
+  function birthdayBlast() {
+    const panel = document.querySelector('.hero-panel');
+    if (!panel) return;
+    const symbols = ['✦', '✧', '💖', '✨', '🎉'];
+    for (let index = 0; index < 28; index += 1) {
+      const particle = document.createElement('span');
+      const angle = (Math.PI * 2 * index) / 28;
+      particle.className = 'hero-blast-particle';
+      particle.textContent = symbols[index % symbols.length];
+      particle.style.setProperty('--x', `${Math.cos(angle) * (120 + Math.random() * 110)}px`);
+      particle.style.setProperty('--y', `${Math.sin(angle) * (90 + Math.random() * 100)}px`);
+      panel.appendChild(particle);
+      window.setTimeout(function () { particle.remove(); }, reducedMotion ? 800 : 1500);
+    }
+    panel.classList.add('hero-blast');
+    window.setTimeout(function () { panel.classList.remove('hero-blast'); }, reducedMotion ? 300 : 900);
+  }
+
   if (title) {
     title.querySelectorAll('.hero-title-line, .hero-name').forEach(function (element, index) {
       element.style.opacity = '0';
@@ -27,10 +45,11 @@ window.addEventListener('birthday:page-ready', function (event) {
     if (disposed) return;
     if (frameIndex >= frames.length) {
       if (count) count.textContent = '💥';
-      if (message) message.textContent = 'THE WAIT IS OVER ❤️';
+      birthdayBlast();
+      if (message) message.textContent = 'THE WAIT IS OVER';
       timer = window.setTimeout(function () {
         if (disposed) return;
-        if (message) message.textContent = 'HAPPY BIRTHDAY, AMMULU! 🎂❤️';
+        if (message) message.innerHTML = 'HAPPY BIRTHDAY SRIMATHI GARU ❤️<span>WITH LOVE &amp; A HUG 🤗❤️</span>';
         if (continueButton) continueButton.hidden = false;
       }, reducedMotion ? 1 : 1000);
       return;
