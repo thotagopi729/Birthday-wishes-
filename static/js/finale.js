@@ -8,8 +8,10 @@ window.addEventListener('birthday:page-ready', function (event) {
   const message = document.getElementById('cake-message');
   const replayButton = document.getElementById('replay-button');
   const confettiCanvas = document.getElementById('confetti-canvas');
+  const afterFinaleTrigger = document.getElementById('after-finale-trigger');
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   let finaleComplete = false;
+  let afterFinaleTimer = null;
 
   if (!cakeWrap || candleEls.length === 0) return;
 
@@ -106,6 +108,9 @@ window.addEventListener('birthday:page-ready', function (event) {
     if (!reducedMotion) {
       setTimeout(() => burstConfetti(), 300);
     }
+    afterFinaleTimer = setTimeout(function () {
+      if (afterFinaleTrigger) afterFinaleTrigger.hidden = false;
+    }, reducedMotion ? 500 : 3200);
   }
 
   function toggleCandle(candle) {
@@ -143,6 +148,12 @@ window.addEventListener('birthday:page-ready', function (event) {
     }
   });
 
+  if (afterFinaleTrigger) {
+    afterFinaleTrigger.addEventListener('click', function () {
+      window.goToPage('/one-last-thing');
+    });
+  }
+
   if (replayButton) {
     replayButton.addEventListener('click', function () {
       window.goToPage('/');
@@ -151,6 +162,7 @@ window.addEventListener('birthday:page-ready', function (event) {
 
   window.dispatchEvent(new CustomEvent('birthday:register-cleanup', { detail: { cleanup: function () {
     document.body.classList.remove('celebrate');
+    if (afterFinaleTimer) clearTimeout(afterFinaleTimer);
     document.querySelectorAll('.confetti-burst').forEach(function (particle) {
       particle.remove();
     });

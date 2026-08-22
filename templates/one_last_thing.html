@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}One Last Thing{% endblock %}
+
+{% block content %}
+<main class="after-finale-page page-reveal">
+  <section class="after-finale-section reveal-group">
+    <h2>One Last Thing... ❤️</h2>
+    <button id="open-hug" type="button" class="unlock-button">Open It ❤️</button>
+  </section>
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/after-finale.js') }}"></script>
+{% endblock %}

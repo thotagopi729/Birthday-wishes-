@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}One Last Thought{% endblock %}
+
+{% block content %}
+<main class="after-finale-page page-reveal">
+  <section class="after-finale-section midnight-section reveal-group">
+    <div id="midnight-first" class="midnight-line">Some memories end here...</div>
+    <div id="midnight-second" class="midnight-line" hidden>...but I hope ours never does. ❤️</div>
+    <button id="open-final-photo" type="button" class="secondary-button" hidden>See Our Last Memory 📸</button>
+  </section>
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/after-finale.js') }}"></script>
+{% endblock %}

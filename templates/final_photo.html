@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}Our Last Memory{% endblock %}
+
+{% block content %}
+<main class="after-finale-page page-reveal">
+  <section class="after-finale-section final-photo-section reveal-group">
+    <figure class="final-photo-wrap is-visible">
+      <img src="{{ url_for('static', filename='images/image.jpeg') }}" alt="One of our favourite memories" />
+      <figcaption>
+        <p>Forever one of my favourite memories. ❤️</p>
+        <p>Happy Birthday, Ammulu. 🌙❤️</p>
+      </figcaption>
+    </figure>
+  </section>
+</main>
+{% endblock %}

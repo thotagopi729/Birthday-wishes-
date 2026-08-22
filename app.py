@@ -21,7 +21,7 @@ if not SITE_PASSCODE or SITE_PASSCODE == "your_passcode_here":
 
 app.secret_key = SECRET_KEY
 
-PROGRESS_ORDER = ["locked", "unlocked", "loading", "hero", "gallery", "letter", "finale"]
+PROGRESS_ORDER = ["locked", "unlocked", "loading", "hero", "gallery", "letter", "finale", "one_last_thing", "hug", "midnight", "final_photo"]
 LETTER_TEXT = """Nuvvu ante naaku chala ishtam. Chala ani cheppadam kuda takkuve, endukante nuvvu naaku just ishtam kaadu — nuvve naa pranam. ❤️
 
 Nee navvu, nee care, nee tho maatladina prathi chinna moment… naa ordinary days ni kuda special ga marchestayi. Nuvvu naa life lo vachina taruvatha, konni simple moments kuda naaku beautiful memories ayyayi.
@@ -166,6 +166,38 @@ def finale_page():
         return redirect("/")
     session["progress"] = "finale"
     return render_template("finale.html")
+
+
+@app.get("/one-last-thing")
+def one_last_thing_page():
+    if not access_allowed("finale"):
+        return redirect("/")
+    session["progress"] = "one_last_thing"
+    return render_template("one_last_thing.html")
+
+
+@app.get("/hug")
+def hug_page():
+    if not access_allowed("one_last_thing"):
+        return redirect("/")
+    session["progress"] = "hug"
+    return render_template("hug.html")
+
+
+@app.get("/midnight")
+def midnight_page():
+    if not access_allowed("hug"):
+        return redirect("/")
+    session["progress"] = "midnight"
+    return render_template("midnight.html")
+
+
+@app.get("/final-photo")
+def final_photo_page():
+    if not access_allowed("midnight"):
+        return redirect("/")
+    session["progress"] = "final_photo"
+    return render_template("final_photo.html")
 
 
 @app.get("/health")

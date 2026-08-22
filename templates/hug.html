@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}A Big Hug For You{% endblock %}
+
+{% block content %}
+<main class="after-finale-page page-reveal">
+  <section class="after-finale-section hug-section reveal-group">
+    <button id="hug-heart" class="hug-heart" type="button" aria-label="Tap the heart">❤️</button>
+    <p class="hug-hint">Tap the heart...</p>
+    <div id="hug-message" class="hug-message" hidden>
+      <div class="hug-emoji" aria-hidden="true">🤗</div>
+      <p>A BIG HUG FOR YOU ❤️</p>
+      <p>Happy Birthday, Ammulu ❤️</p>
+      <button id="open-midnight" type="button" class="secondary-button" hidden>One Last Thought... 🌙</button>
+    </div>
+  </section>
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/after-finale.js') }}"></script>
+{% endblock %}
