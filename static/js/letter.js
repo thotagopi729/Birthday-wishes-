@@ -1,5 +1,7 @@
-window.addEventListener('birthday:page-ready', function (event) {
-  if (event.detail.path !== '/letter') return;
+let letterInitialized = false;
+
+function initializeLetter() {
+  if (letterInitialized) return;
   const card = document.getElementById('letter-card');
   const target = document.getElementById('typed-text');
   const beginButton = document.getElementById('letter-begin');
@@ -11,6 +13,7 @@ window.addEventListener('birthday:page-ready', function (event) {
   if (!card || !target || !text) {
     return;
   }
+  letterInitialized = true;
 
   function revealContinueButton() {
     if (!continueButton) return;
@@ -70,4 +73,14 @@ window.addEventListener('birthday:page-ready', function (event) {
   window.dispatchEvent(new CustomEvent('birthday:register-cleanup', { detail: { cleanup: function () {
     if (typingTimer) clearTimeout(typingTimer);
   } } }));
+}
+
+window.addEventListener('birthday:page-ready', function (event) {
+  if (event.detail.path === '/letter') initializeLetter();
 });
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initializeLetter, { once: true });
+} else if (document.querySelector('#page-container[data-page-path="/letter"]')) {
+  initializeLetter();
+}

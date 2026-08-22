@@ -661,6 +661,13 @@ button, input {
   margin-top: 10px;
 }
 
+.celebration-message {
+  min-height: 2.2em;
+  margin-top: 10px;
+  color: var(--gold);
+  font-size: 1.8rem;
+}
+
 .scroll-cue {
   margin-top: 18px;
   font-size: 0.72rem;
@@ -895,6 +902,7 @@ button, input {
   font-size: 5.6rem;
   line-height: 1;
   display: block;
+  pointer-events: none;
   filter: drop-shadow(0 12px 20px rgba(255, 111, 165, 0.22));
 }
 
@@ -960,13 +968,11 @@ button, input {
 .finale-title {
   font-size: clamp(2.2rem, 5vw, 3.2rem);
   color: var(--gold);
-  display: none;
   margin: 0;
 }
 
 .finale-subtitle {
   max-width: 420px;
-  display: none;
   font-size: 0.98rem;
   line-height: 1.75;
   opacity: 0.9;

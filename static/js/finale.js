@@ -99,8 +99,8 @@ window.addEventListener('birthday:page-ready', function (event) {
     if (finaleComplete) return;
     finaleComplete = true;
     document.body.classList.add('celebrate');
-    title.style.display = 'block';
-    subtitle.style.display = 'block';
+    title.hidden = false;
+    subtitle.hidden = false;
     message.textContent = 'The wish is glowing...';
     burstConfetti();
     if (!reducedMotion) {
@@ -116,21 +116,9 @@ window.addEventListener('birthday:page-ready', function (event) {
     candle.style.filter = 'blur(0.5px)';
   }
 
-  function blowAllCandles() {
-    let newlyBlown = 0;
-    candleEls.forEach(function (candle) {
-      if (!candle.classList.contains('out')) {
-        toggleCandle(candle);
-        newlyBlown += 1;
-      }
-    });
-    blownCount += newlyBlown;
-    if (blownCount === candleEls.length) finishFinale();
-  }
-
   let blownCount = 0;
-  candleEls.forEach(candle => {
-    candle.addEventListener('click', function (event) {
+  candleEls.forEach(function (candle) {
+    function extinguish(event) {
       event.stopPropagation();
       if (candle.classList.contains('out')) return;
       toggleCandle(candle);
@@ -138,24 +126,14 @@ window.addEventListener('birthday:page-ready', function (event) {
       if (blownCount === candleEls.length) {
         finishFinale();
       }
-    });
-  });
-
-  cakeWrap.addEventListener('keydown', function (event) {
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault();
-      blowAllCandles();
     }
-  });
-
-  cakeWrap.addEventListener('click', function () {
-    const nextCandle = candleEls.find(function (candle) {
-      return !candle.classList.contains('out');
+    candle.addEventListener('click', extinguish);
+    candle.addEventListener('keydown', function (event) {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        extinguish(event);
+      }
     });
-    if (!nextCandle) return;
-    toggleCandle(nextCandle);
-    blownCount += 1;
-    if (blownCount === candleEls.length) finishFinale();
   });
 
   if (replayButton) {

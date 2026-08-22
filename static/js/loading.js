@@ -2,10 +2,11 @@ window.addEventListener('birthday:page-ready', function (event) {
   if (event.detail.path !== '/loading') return;
   const progressBar = document.getElementById('progress-bar');
   const loadingPercent = document.getElementById('loading-percent');
+  const readyMessage = document.getElementById('loading-ready');
+  const continueButton = document.getElementById('loading-continue');
   if (!progressBar || !loadingPercent) return;
 
   let progress = 0;
-  let activeTimer = null;
 
   function updateProgress(value) {
     progress = Math.min(100, Math.max(0, value));
@@ -14,13 +15,9 @@ window.addEventListener('birthday:page-ready', function (event) {
   }
 
   function finishLoading() {
-    if (activeTimer) {
-      clearTimeout(activeTimer);
-    }
     updateProgress(100);
-    activeTimer = setTimeout(function () {
-      window.goToPage('/hero');
-    }, 520);
+    if (readyMessage) readyMessage.hidden = false;
+    if (continueButton) continueButton.hidden = false;
   }
 
   const intervalId = setInterval(function () {
@@ -34,8 +31,13 @@ window.addEventListener('birthday:page-ready', function (event) {
     updateProgress(nextStep);
   }, 180);
 
+  if (continueButton) {
+    continueButton.addEventListener('click', function () {
+      window.goToPage('/hero');
+    });
+  }
+
   window.dispatchEvent(new CustomEvent('birthday:register-cleanup', { detail: { cleanup: function () {
     clearInterval(intervalId);
-    if (activeTimer) clearTimeout(activeTimer);
   } } }));
 });

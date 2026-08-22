@@ -4,16 +4,11 @@ window.addEventListener('birthday:page-ready', function (event) {
   const dotsWrap = document.getElementById('gallery-dots');
   const photos = Array.isArray(window.galleryPhotos) ? window.galleryPhotos : [];
   const quotes = Array.isArray(window.galleryQuotes) ? window.galleryQuotes : [];
-  let fallbackTimer = null;
 
   if (!stack || photos.length === 0) {
     const fallback = document.createElement('div');
     fallback.textContent = 'Memories are on their way...';
     if (stack) stack.appendChild(fallback);
-    fallbackTimer = setTimeout(() => window.goToPage('/letter'), 1200);
-    window.dispatchEvent(new CustomEvent('birthday:register-cleanup', { detail: { cleanup: function () {
-      clearTimeout(fallbackTimer);
-    } } }));
     return;
   }
 

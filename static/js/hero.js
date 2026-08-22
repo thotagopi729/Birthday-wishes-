@@ -1,84 +1,45 @@
 window.addEventListener('birthday:page-ready', function (event) {
   if (event.detail.path !== '/hero') return;
   const title = document.querySelector('.hero-title');
-  const name = document.querySelector('.hero-name');
-  const countdownFrames = {
-    days: document.getElementById('cd-days'),
-    hours: document.getElementById('cd-hours'),
-    mins: document.getElementById('cd-mins'),
-    secs: document.getElementById('cd-secs')
-  };
-  const doneLabel = document.getElementById('countdown-done');
+  const count = document.getElementById('celebration-count');
+  const message = document.getElementById('celebration-message');
+  const continueButton = document.getElementById('hero-continue');
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  function animateTitle() {
-    if (!title) return;
-    const words = title.querySelectorAll('.hero-title-line, .hero-name');
-    words.forEach(function (element, index) {
-      const delay = reducedMotion ? 0 : index * 420;
+  let timer = null;
+  let disposed = false;
+
+  if (title) {
+    title.querySelectorAll('.hero-title-line, .hero-name').forEach(function (element, index) {
       element.style.opacity = '0';
       element.style.transform = reducedMotion ? 'none' : 'translateY(18px)';
-      setTimeout(function () {
+      window.setTimeout(function () {
+        if (disposed) return;
         element.style.transition = 'opacity 420ms ease, transform 420ms ease';
         element.style.opacity = '1';
         element.style.transform = 'none';
-      }, delay);
+      }, reducedMotion ? 0 : index * 420);
     });
   }
 
-  function updateCountdownDisplay(target, value) {
-    if (!target) return;
-    target.textContent = String(value).padStart(2, '0');
-    target.classList.remove('count-flash');
-    void target.offsetWidth;
-    target.classList.add('count-flash');
-    setTimeout(function () {
-      target.classList.remove('count-flash');
-    }, 420);
-  }
-
-  function nextBirthdayCountdown() {
-    const birthdayDate = new Date();
-    birthdayDate.setMonth(7, 22);
-    birthdayDate.setHours(0, 0, 0, 0);
-
-    if (birthdayDate <= new Date()) {
-      birthdayDate.setFullYear(birthdayDate.getFullYear() + 1);
+  const frames = ['3', '2', '1'];
+  let frameIndex = 0;
+  function showNextFrame() {
+    if (disposed) return;
+    if (frameIndex >= frames.length) {
+      if (count) count.textContent = '💥';
+      if (message) message.textContent = 'THE WAIT IS OVER ❤️';
+      timer = window.setTimeout(function () {
+        if (disposed) return;
+        if (message) message.textContent = 'HAPPY BIRTHDAY, AMMULU! 🎂❤️';
+        if (continueButton) continueButton.hidden = false;
+      }, reducedMotion ? 1 : 1000);
+      return;
     }
-
-    function render() {
-      const now = new Date();
-      const diff = birthdayDate - now;
-      const totalSeconds = Math.max(0, Math.floor(diff / 1000));
-      const days = Math.floor(totalSeconds / 86400);
-      const hours = Math.floor((totalSeconds % 86400) / 3600);
-      const mins = Math.floor((totalSeconds % 3600) / 60);
-      const secs = totalSeconds % 60;
-
-      updateCountdownDisplay(countdownFrames.days, days);
-      updateCountdownDisplay(countdownFrames.hours, hours);
-      updateCountdownDisplay(countdownFrames.mins, mins);
-      updateCountdownDisplay(countdownFrames.secs, secs);
-
-      if (totalSeconds <= 0) {
-        if (doneLabel) {
-          doneLabel.style.display = 'block';
-        }
-        return;
-      }
-
-      if (doneLabel) {
-        doneLabel.style.display = 'none';
-      }
-    }
-
-    render();
-    return setInterval(render, 1000);
+    if (count) count.textContent = frames[frameIndex];
+    frameIndex += 1;
+    timer = window.setTimeout(showNextFrame, reducedMotion ? 1 : 800);
   }
-
-  const continueButton = document.getElementById('hero-continue');
-
-  animateTitle();
-  const countdownInterval = nextBirthdayCountdown();
+  showNextFrame();
 
   if (continueButton) {
     continueButton.addEventListener('click', function () {
@@ -87,6 +48,7 @@ window.addEventListener('birthday:page-ready', function (event) {
   }
 
   window.dispatchEvent(new CustomEvent('birthday:register-cleanup', { detail: { cleanup: function () {
-    if (countdownInterval) clearInterval(countdownInterval);
+    disposed = true;
+    if (timer) window.clearTimeout(timer);
   } } }));
 });
