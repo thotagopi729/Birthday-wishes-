@@ -125,6 +125,13 @@ window.addEventListener('birthday:page-ready', function (event) {
     if (blownCount === candleEls.length) finishFinale();
   }
 
+  candleEls.forEach(function (candle) {
+    candle.addEventListener('click', function (event) {
+      event.stopPropagation();
+      extinguishNextCandle();
+    });
+  });
+
   cakeWrap.addEventListener('click', function () {
     extinguishNextCandle();
   });

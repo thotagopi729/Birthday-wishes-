@@ -957,6 +957,7 @@ button, input {
 
 .candle {
   position: absolute;
+  z-index: 2;
   width: 18px;
   height: 34px;
   border-radius: 8px 8px 10px 10px;
@@ -965,6 +966,7 @@ button, input {
   box-shadow: 0 0 18px rgba(247, 215, 140, 0.3);
   overflow: visible;
   cursor: pointer;
+  touch-action: manipulation;
 }
 
 .candle::before {
