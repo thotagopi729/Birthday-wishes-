@@ -11,7 +11,16 @@
         <p>Forever one of my favourite memories. ❤️</p>
         <p>Happy Birthday, Ammulu. 🌙❤️</p>
       </figcaption>
+      <button type="button" id="replay-button" class="replay-button">Replay Our Story ↺</button>
     </figure>
   </section>
 </main>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  document.getElementById('replay-button').addEventListener('click', function () {
+    window.goToPage('/');
+  });
+</script>
 {% endblock %}

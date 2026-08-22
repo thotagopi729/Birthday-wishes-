@@ -1218,7 +1218,9 @@ body.midnight-mode {
 }
 
 .final-photo-wrap img {
-  width: 100%;
+  width: auto;
+  height: auto;
+  max-width: 100%;
   max-height: 52vh;
   object-fit: contain;
   border-radius: 18px;
