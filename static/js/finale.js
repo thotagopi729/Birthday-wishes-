@@ -99,8 +99,8 @@ window.addEventListener('birthday:page-ready', function (event) {
     if (finaleComplete) return;
     finaleComplete = true;
     document.body.classList.add('celebrate');
-    title.hidden = false;
-    subtitle.hidden = false;
+    title.style.display = 'block';
+    subtitle.style.display = 'block';
     message.textContent = 'The wish is glowing...';
     burstConfetti();
     if (!reducedMotion) {
@@ -117,23 +117,23 @@ window.addEventListener('birthday:page-ready', function (event) {
   }
 
   let blownCount = 0;
-  candleEls.forEach(function (candle) {
-    function extinguish(event) {
-      event.stopPropagation();
-      if (candle.classList.contains('out')) return;
-      toggleCandle(candle);
-      blownCount += 1;
-      if (blownCount === candleEls.length) {
-        finishFinale();
-      }
+  function extinguishNextCandle() {
+    const nextCandle = candleEls[blownCount];
+    if (!nextCandle || nextCandle.classList.contains('out')) return;
+    toggleCandle(nextCandle);
+    blownCount += 1;
+    if (blownCount === candleEls.length) finishFinale();
+  }
+
+  cakeWrap.addEventListener('click', function () {
+    extinguishNextCandle();
+  });
+
+  cakeWrap.addEventListener('keydown', function (event) {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      extinguishNextCandle();
     }
-    candle.addEventListener('click', extinguish);
-    candle.addEventListener('keydown', function (event) {
-      if (event.key === 'Enter' || event.key === ' ') {
-        event.preventDefault();
-        extinguish(event);
-      }
-    });
   });
 
   if (replayButton) {
